@@ -1,0 +1,50 @@
+{% extends "dashboard/base.html" %}
+{% block content %}
+    <div class="max-w-4xl mx-auto bg-white rounded my-10 p-4 rounded shadow border">
+        <h4 class="text-xl font-medium">Profile Information</h4>
+        <p>Balance: ₱ {{ account_details.balance }}</p>
+        <form method="POST">
+            {% csrf_token %}
+            {% for field in edit_form %}
+                <div class="mt-4">
+                    <label for="{{field.id_for_label}}" class="block text-sm font-medium text-gray-700">{{field.label}}</label>
+                    {{field}}
+                </div>
+            {% endfor %}
+            {% if messages %}
+                {% for message in messages %}
+                    {% if 'profile' in message.tags %}
+                        <div class="mt-4 p-2 rounded text-white {% if 'success' in message.tags %}bg-green-600{% elif 'error' in message.tags %}bg-red-600{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            <div class="mt-4">
+                <button type="submit" name="edit_profile" class="px-4 py-1 bg-indigo-500 text-white ease duration-200 hover:bg-indigo-600 rounded">Update</button>
+            </div>
+        </form>
+        <h4 class="text-xl font-medium mt-4">Security Settings</h4>
+        <form method="post">
+            {% csrf_token %}
+            {% for field in change_password_form %}
+                <div class="mt-4">
+                    <label for="{{field.id_for_label}}" class="block text-sm font-medium text-gray-700">{{field.label}}</label>
+                    {{field}}
+                </div>
+            {% endfor %}
+            {% if messages %}
+                {% for message in messages %}
+                    {% if 'password' in message.tags %}
+                        <div class="mt-4 p-2 rounded text-white {% if 'success' in message.tags %}bg-green-600{% elif 'error' in message.tags %}bg-red-600{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            <div class="mt-4">
+                <button type="submit" name="change_password" class="px-4 py-1 bg-indigo-500 text-white ease duration-200 hover:bg-indigo-600 rounded">Change Password</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}

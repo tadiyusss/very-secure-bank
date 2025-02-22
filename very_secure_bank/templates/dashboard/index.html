@@ -1,0 +1,106 @@
+{% extends "dashboard/base.html" %}
+{% block content %}
+<div class="max-w-6xl bg-white shadow rounded border mx-auto my-4 p-2">
+    <h5 class="text-2xl">Hello There, {{user.first_name}} {{user.last_name}}</h5>
+    <p class="text-gray-500">Welcome to Very Secure Banking. You can view your account details below.</p>
+</div>
+<div class="grid md:grid-cols-4 grid-cols-1 max-w-6xl mx-auto gap-2">
+    <div class="col-span-1">
+        <div class=" border p-2 bg-white shadow rounded">
+            <h5 class="font-medium text-sm text-gray-500">Current Balance {{ role }}</h5>
+            <h3 class="text-2xl font-semibold">₱ {{account_details.balance}}</h3>
+        </div>
+    </div>
+    <div class="md:col-span-3 col-span-1 ">
+        <div class="bg-white rounded p-2 border shadow">
+            <h5 class="font-medium text-sm text-gray-500">Your Wallet Address</h5>
+            <p>{{account_details.wallet_address}}</p>
+        </div>
+        <div class="mt-2 bg-white rounded p-2 border shadow">
+            <div class="flex items-center justify-between">
+                <h5 class="font-medium text-sm text-gray-500">Send Money</h5>
+                <a href="{% url 'transactions' %}?user_id={{user.id}}" class="text-sm text-indigo-500 px-2 py-1 bg-indigo-500 text-white rounded hover:bg-indigo-600 ease duration-200">View Transactions</a>
+            </div>
+            
+            <form method="POST">
+                {% csrf_token %}
+                {% for field in send_money_form %}
+                    <div class="mt-2">
+                        <label for="{{field.id_for_label}}" class="block text-sm font-medium text-gray-700">{{field.label}}</label>
+                        {{field}}
+                    </div>
+                {% endfor %}
+                <div class="mt-4">
+                    <button type="submit" name="send_money" class="px-2 py-1 rounded text-sm bg-indigo-500 ease hover:bg-indigo-600 text-white duration-200">Send Money</button>
+                </div>
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if 'send_money' in message.tags %}
+                            <div class="mt-4 p-2 rounded text-white {% if 'success' in message.tags %}bg-green-600{% elif 'error' in message.tags %}bg-red-600{% endif %}">
+                                {{ message }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </form>
+        </div>
+        {% if role == 'admin' %}
+        <div class="mt-2 bg-white rounded border shadow">
+            <div class="p-2">
+                <h5 class="font-medium text-sm text-gray-500">Administrator Controls</h5>
+            </div>
+            <form method="post" class="p-2">
+                {% csrf_token %}
+                {% for field in add_money_form %}
+                    <div class="mt-2">
+                        <label for="{{field.id_for_label}}" class="block text-sm font-medium text-gray-700">{{field.label}}</label>
+                        {{field}}
+                    </div>
+                {% endfor %}
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if 'add_money' in message.tags %}
+                            <div class="mt-4 p-2 rounded text-white {% if 'success' in message.tags %}bg-green-600{% elif 'error' in message.tags %}bg-red-600{% endif %}">
+                                {{ message }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+                <div class="mt-4">
+                    <button type="submit" name="add_money" class="px-2 py-1 rounded text-sm bg-indigo-500 ease hover:bg-indigo-600 text-white duration-200">Add Money</button>
+                </div>
+            </form>
+        </div>
+
+
+        <div class="mt-2 bg-white rounded border shadow">
+            <div class="p-2">
+                <h5 class="font-medium text-sm text-gray-500">Administrator View</h5>
+            </div>
+            <table class="w-full">
+                <thead>
+                    <tr class="">
+                        <th class="font-normal p-2">ID</th>
+                        <th class="font-normal p-2">First Name</th>
+                        <th class="font-normal p-2">Last Name</th>
+                        <th class="font-normal p-2">Username</th>
+                        <th class="font-normal p-2">Email</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in user_list %}
+                    <tr class="border-t hover:bg-gray-50 ease duration-200">
+                        <td class="text-center p-2">{{user.id}}</td>
+                        <td class="text-center p-2">{{user.first_name}}</td>
+                        <td class="text-center p-2">{{user.last_name}}</td>
+                        <td class="text-center p-2">{{user.username}}</td>
+                        <td class="text-center p-2">{{user.email}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
