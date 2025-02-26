@@ -123,10 +123,11 @@ def dashboard(request):
                 amount = send_money_form.cleaned_data['amount']
                 if not receiver:
                     messages.error(request, 'Unable to find wallet address', extra_tags='send_money')
-
+                    return redirect('dashboard')
+                
                 if account_details.balance < amount:
                     messages.error(request, 'Insufficient balance', extra_tags='send_money')
-                
+                    return redirect('dashboard')
                 account_details.balance -= amount
                 account_details.save()
                 receiver.balance += amount
